@@ -156,7 +156,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Gemini API Key (Free tier available)
-GEMINI_API_KEY = 'AIzaSyDF5LBMjngUkRR3lC2Ru6poVnSQ4XM0OqI'
+GEMINI_API_KEY = "API_KEY
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
