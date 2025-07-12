@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StackIt Community</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4da.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%); }
+    .glass {
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
+    }
+    .zen-bg { background: linear-gradient(120deg, #f0fdfa 0%, #e0e7ef 100%); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Include the modern navigation component -->
+  {% include 'components/navigation.html' %}
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- All Communities View (when no specific community) -->
+    <div id="all-communities-view" class="hidden">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Communities</h1>
+        <p class="text-gray-600">Discover and join learning communities</p>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="relative max-w-md mx-auto">
+          <input type="text" id="search-input" placeholder="Search communities..." 
+                 class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" autocomplete="off">
+          <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+        </div>
+      </div>
+      
+      <!-- Communities Grid -->
+      <div id="communities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Communities will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Specific Community View -->
+    <div id="specific-community-view" class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar: Community Info -->
+      <aside class="w-full lg:w-1/3">
+        <div class="glass p-6 rounded-2xl">
+          <div class="text-center mb-6">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-white mb-4 mx-auto" id="community-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2" id="community-name">Community Name</h1>
+            <p class="text-gray-600 mb-4" id="community-description">Community description goes here...</p>
+            <div class="flex gap-2 justify-center">
+              <span class="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full" id="community-member-count">0 members</span>
+              <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full" id="community-questions-count">0 questions</span>
+            </div>
+          </div>
+
+          <!-- Community Stats -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-purple-600" id="community-members">0</div>
+              <div class="text-xs text-gray-500">Members</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-blue-600" id="community-questions">0</div>
+              <div class="text-xs text-gray-500">Questions</div>
+            </div>
+          </div>
+
+          <!-- Community Actions -->
+          <div class="space-y-3">
+            <button id="request-join-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 transform hover:scale-105">
+              <i class="fas fa-sign-in-alt mr-2"></i>Request to Join
+            </button>
+            <button id="leave-community-btn" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 transform hover:scale-105" style="display:none;">
+              <i class="fas fa-sign-out-alt mr-2"></i>Leave Community
+            </button>
+          </div>
+
+          <!-- Invite Code -->
+          <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">Invite Code</h4>
+            <div class="flex items-center gap-2">
+              <code id="invite-code" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono">Loading...</code>
+              <button onclick="copyInviteCode(document.getElementById('invite-code').textContent)" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Join Requests Section (for community owners) -->
+        <div id="join-requests-section" class="glass p-6 rounded-2xl mt-6" style="display:none;">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            <i class="fas fa-user-plus mr-2"></i>Join Requests
+          </h3>
+          <div id="join-requests-list" class="space-y-3">
+            <!-- Join requests will be loaded here -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main: Questions -->
+      <section class="w-full lg:w-2/3">
+        <div class="glass p-6 rounded-2xl">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 mb-1">Questions</h2>
+              <p class="text-gray-600">Ask questions and get answers from the community</p>
+            </div>
+          </div>
+
+          <!-- Ask Question Form -->
+          <div class="mb-6 p-4 bg-gray-50 rounded-xl">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Ask a Question</h3>
+            <form id="question-form" class="space-y-4">
+              <div>
+                <label for="question-title" class="block text-sm font-medium text-gray-700 mb-2">Question Title</label>
+                <input type="text" id="question-title" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="What's your question?" autocomplete="off">
+              </div>
+              <div>
+                <label for="question-content" class="block text-sm font-medium text-gray-700 mb-2">Question Details</label>
+                <textarea id="question-content" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Provide more details about your question..." autocomplete="off"></textarea>
+              </div>
+              <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-paper-plane mr-2"></i>Ask Question
+              </button>
+            </form>
+          </div>
+
+          <!-- Questions List -->
+          <div id="questions-list" class="space-y-4">
+            <!-- Questions will be loaded here -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Message Container -->
+  <div id="message-container" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50" style="display:none;"></div>
+
+  <!-- Join Request Modal -->
+  <div id="joinRequestModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-32 mx-auto p-8 border w-11/12 md:w-1/2 lg:w-1/3 shadow-2xl rounded-2xl bg-white">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold text-gray-900">Request to Join Community</h3>
+        <button id="closeJoinRequestModal" class="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="join-request-form" class="space-y-4">
+        <div>
+          <label for="join-request-message" class="block text-sm font-medium text-gray-700 mb-2">Optional message to the community owner</label>
+          <textarea id="join-request-message" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Why do you want to join? (optional)"></textarea>
+        </div>
+        <div class="flex gap-4">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+            <i class="fas fa-paper-plane mr-2"></i>Send Request
+          </button>
+          <button type="button" id="cancelJoinRequest" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{% static 'community.js' %}"></script>
+</body>
+</html> 

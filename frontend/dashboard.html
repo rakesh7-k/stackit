@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StackIt Dashboard</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4da.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%); }
+    .glass {
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
+    }
+    .zen-bg { background: linear-gradient(120deg, #f0fdfa 0%, #e0e7ef 100%); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Include the modern navigation component -->
+  {% include 'components/navigation.html' %}
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar: User Info -->
+      <aside class="w-full lg:w-1/3">
+        <div class="glass p-6 rounded-2xl">
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative mb-4">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white mb-2" id="user-avatar">👤</div>
+              <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-4 border-white"></div>
+            </div>
+            <div class="text-center">
+              <div class="text-xl font-semibold text-gray-800 mb-1" id="user-name">User</div>
+              <div class="text-sm text-gray-500 mb-3" id="user-email">user@email.com</div>
+              <div class="flex gap-2 justify-center">
+                <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full" id="user-mentor-badge" style="display:none;">Mentor</span>
+                <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full" id="user-zen-badge" style="display:none;">Zen Mode</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-blue-600" id="user-points">0</div>
+              <div class="text-xs text-gray-500">Points</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-purple-600" id="user-questions">0</div>
+              <div class="text-xs text-gray-500">Questions</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-green-600" id="user-answers">0</div>
+              <div class="text-xs text-gray-500">Answers</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="space-y-3">
+            <button id="profile-btn" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 transform hover:scale-105">
+              <i class="fas fa-user mr-2"></i>Profile
+            </button>
+            <button id="journal-btn" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 transform hover:scale-105">
+              <i class="fas fa-book mr-2"></i>Learning Journal
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main: Communities -->
+      <section class="w-full lg:w-2/3">
+        <div class="glass p-6 rounded-2xl">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 mb-1">Your Communities</h2>
+              <p class="text-gray-600">Connect with learning communities and share knowledge</p>
+            </div>
+            <button id="create-community-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
+              <i class="fas fa-plus mr-2"></i>New Community
+            </button>
+          </div>
+          
+          <div id="communities-list" class="space-y-4 mb-8">
+            <!-- Communities will be loaded here -->
+          </div>
+          
+          <!-- Create Community Form (initially hidden) -->
+          <div id="create-community-form" class="mt-6 p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200" style="display: none;">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Create New Community</h3>
+            <form id="new-community-form" class="space-y-4">
+              <div>
+                <label for="community-name" class="block text-sm font-medium text-gray-700 mb-2">Community Name</label>
+                <input type="text" id="community-name" name="name" placeholder="Enter community name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" autocomplete="off">
+              </div>
+              <div>
+                <label for="community-description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="community-description" name="description" placeholder="Describe your community" required rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" autocomplete="off"></textarea>
+              </div>
+              <div class="flex gap-3">
+                <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                  <i class="fas fa-check mr-2"></i>Create Community
+                </button>
+                <button type="button" id="cancel-create-community" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Join Community Section -->
+          <div class="mt-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-200">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Join a Community</h3>
+            <form id="join-community-form" class="flex gap-3">
+              <input type="text" id="join-invite-code" placeholder="Enter invite code" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" autocomplete="off">
+              <button type="submit" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                <i class="fas fa-sign-in-alt mr-2"></i>Join
+              </button>
+            </form>
+            <div id="join-community-msg" class="text-sm mt-3"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-sm text-gray-500 pb-8">
+    Built with <span class="text-pink-500">&#10084;</span> for hackathon victory · <span class="font-semibold">StackIt</span> 2025
+  </footer>
+
+  <script src="{% static 'dashboard.js' %}"></script>
+</body>
+</html> 

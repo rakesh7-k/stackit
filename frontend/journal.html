@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Journal - StackIt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%); }
+        .glass {
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+        }
+        .zen-bg { background: linear-gradient(120deg, #f0fdfa 0%, #e0e7ef 100%); }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Include the modern navigation component -->
+    {% include 'components/navigation.html' %}
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="glass p-6 rounded-2xl mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Learning Journal</h1>
+                    <p class="text-gray-600">Track your learning progress and reflect on your journey</p>
+                </div>
+                <button id="addEntryBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Entry
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center">
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                        <i class="fas fa-book text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Entries</p>
+                        <p id="totalEntries" class="text-2xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center">
+                    <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl">
+                        <i class="fas fa-calendar text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">This Week</p>
+                        <p id="weeklyEntries" class="text-2xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center">
+                    <div class="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Learning Streak</p>
+                        <p id="learningStreak" class="text-2xl font-bold text-gray-900">0 days</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center">
+                    <div class="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl">
+                        <i class="fas fa-star text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Avg. Rating</p>
+                        <p id="avgRating" class="text-2xl font-bold text-gray-900">0.0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="glass p-6 rounded-2xl mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <label for="filterCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="filterCategory" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <option value="">All Categories</option>
+                            <option value="programming">Programming</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="language">Language</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="filterRating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                        <select id="filterRating" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <option value="">All Ratings</option>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3">3+ Stars</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <input type="text" id="searchEntries" placeholder="Search entries..." class="border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" autocomplete="off">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button id="clearFilters" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal Entries -->
+        <div id="entriesContainer" class="space-y-6">
+            <!-- Entries will be populated here -->
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-8">
+            <button id="loadMoreBtn" class="px-8 py-4 text-blue-600 border-2 border-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 hidden">
+                <i class="fas fa-arrow-down mr-2"></i>Load More Entries
+            </button>
+        </div>
+    </div>
+
+    <!-- Add Entry Modal -->
+    <div id="addEntryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-8 border w-11/12 md:w-3/4 lg:w-1/2 shadow-2xl rounded-2xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-900">Add Journal Entry</h3>
+                    <button id="closeAddEntryModal" class="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="entryForm" class="space-y-6">
+                    <div>
+                        <label for="entryTitle" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text" id="entryTitle" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="What did you learn today?" autocomplete="off">
+                    </div>
+                    
+                    <div>
+                        <label for="entryCategory" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <select id="entryCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" autocomplete="off">
+                            <option value="programming">Programming</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="language">Language</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="entryContent" class="block text-sm font-medium text-gray-700 mb-2">What did you learn?</label>
+                        <textarea id="entryContent" rows="6" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Describe what you learned, challenges you faced, and how you overcame them..." autocomplete="off"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="entryReflection" class="block text-sm font-medium text-gray-700 mb-2">Reflection</label>
+                        <textarea id="entryReflection" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="How do you feel about this learning experience? What would you do differently next time?" autocomplete="off"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label for="entryRating" class="block text-sm font-medium text-gray-700 mb-2">Learning Experience Rating</label>
+                            <div class="flex items-center space-x-3">
+                                <input type="range" id="entryRating" min="1" max="5" value="3" class="flex-1">
+                                <span id="ratingValue" class="text-lg font-medium text-gray-700">3</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="entryConfidence" class="block text-sm font-medium text-gray-700 mb-2">Confidence Level</label>
+                            <div class="flex items-center space-x-3">
+                                <input type="range" id="entryConfidence" min="0" max="100" value="50" class="flex-1">
+                                <span id="confidenceValue" class="text-lg font-medium text-gray-700">50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>Save Entry
+                        </button>
+                        <button type="button" id="cancelEntry" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entry Detail Modal -->
+    <div id="entryDetailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="detailTitle" class="text-lg font-semibold text-gray-900">Entry Details</h3>
+                    <button id="closeEntryDetailModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="entryDetailContent" class="space-y-4">
+                    <!-- Entry details will be populated here -->
+                </div>
+                
+                <div class="flex justify-end mt-6">
+                    <button id="closeEntryDetail" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'journal.js' %}"></script>
+</body>
+</html> 
+</html> 
