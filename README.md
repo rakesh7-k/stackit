@@ -265,5 +265,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - The hackathon community for inspiration
 
 ---
-
-**Built with ❤️ for hackathon success! 🏆🚀** 
