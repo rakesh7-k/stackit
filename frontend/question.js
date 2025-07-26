@@ -226,7 +226,7 @@ class QuestionPage {
         });
 
         // Preview button
-        document.getElementById('previewBtn').addEventListener('click', () => {
+        document.getElementById('preview-answer').addEventListener('click', () => {
             this.showPreview();
         });
 
@@ -243,25 +243,18 @@ class QuestionPage {
         });
 
         // Modal close buttons
-        document.getElementById('closeAiModal').addEventListener('click', () => {
-            this.hideAiModal();
-        });
-
         document.getElementById('closePreviewModal').addEventListener('click', () => {
             this.hidePreviewModal();
         });
 
-        document.getElementById('closePreview').addEventListener('click', () => {
+        document.getElementById('cancel-preview').addEventListener('click', () => {
             this.hidePreviewModal();
         });
 
-        // AI modal buttons
-        document.getElementById('acceptAi').addEventListener('click', () => {
-            this.acceptAiSuggestion();
-        });
-
-        document.getElementById('rejectAi').addEventListener('click', () => {
-            this.rejectAiSuggestion();
+        // Preview modal confirm button
+        document.getElementById('confirm-post').addEventListener('click', () => {
+            this.hidePreviewModal();
+            this.submitAnswer();
         });
 
         // Voting (delegated event handling)
@@ -410,7 +403,9 @@ class QuestionPage {
             return;
         }
 
-        document.getElementById('previewContent').innerHTML = content;
+        // Convert line breaks to HTML and sanitize basic formatting
+        const formattedContent = content.replace(/\n/g, '<br>');
+        document.getElementById('preview-content').innerHTML = formattedContent;
         document.getElementById('previewModal').classList.remove('hidden');
     }
 
