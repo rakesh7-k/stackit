@@ -10,7 +10,7 @@
 
 > Platforms like Stack Overflow are overwhelming, public, and not beginner-friendly. Learners often feel afraid to ask. Communities lack safe spaces to learn and grow.
 
-## ✅ What We Built (8-Hour MVP)
+## ✅ What We Built 
 
 | Feature | Why It's Unique + Judge-Impressing |
 |---------|-----------------------------------|
@@ -21,4 +21,5 @@
 | 💬 Confidence Meter on Answers | Users self-rate how sure they are |
 | 🧑‍🏫 Mentor Mode | Tag mentors in a community — human connection |
 | 🧠 AI Feedback on Answers | GPT reviews and improves what you wrote |
+  
 
